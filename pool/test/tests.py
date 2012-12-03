@@ -37,10 +37,10 @@
 #
 #
 
-"""Unit Tests for the pool classes in synnefo.lib.pool
+"""Unit Tests for the pool classes in pool
 
 Provides unit tests for the code implementing pool
-classes in the synnefo.lib.pool module.
+classes in the pool module.
 
 """
 
@@ -57,9 +57,9 @@ import time
 import threading
 from collections import defaultdict
 
-from synnefo.lib.pool import ObjectPool, PoolLimitError, PoolVerificationError
-from synnefo.lib.pool.http import get_http_connection
-from synnefo.lib.pool.http import _pools as _http_pools
+from pool import ObjectPool, PoolLimitError, PoolVerificationError
+from pool.http import get_http_connection
+from pool.http import _pools as _http_pools
 
 # Use backported unittest functionality if Python < 2.7
 try:
