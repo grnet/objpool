@@ -31,7 +31,7 @@
 # interpreted as representing official policies, either expressed
 # or implied, of GRNET S.A.
 
-from pool import ObjectPool
+from objpool import ObjectPool
 from select import select
 
 from httplib import (
