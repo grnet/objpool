@@ -1,18 +1,17 @@
 Source: objpool
 Section: python
 Priority: optional
-Maintainer: Stavros Sachtouris <saxtouri@admin.grnet.gr>
+Maintainer: Synnefo development team <synnefo-devel@googlegroups.com>
 Build-Depends: debhelper (>= 8), python-all (>= 2.5)
 Standards-Version: 3.9.2
-XS-Python-Version: >= 2.6
-Homepage: https://github.com/saxtouri/objpool
+X-Python-Version: >= 2.6
+Homepage: https://github.com/grnet/objpool
 
 Package: python-objpool
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-setuptools,
+Depends: ${misc:Depends}, ${python:Depends}
 XB-Python-Version: ${python:Versions}
 Description: Object pool library for python
  Objpool provides a generic library for pooling resources as objects. As an
  example, it includes a pool for httplib HTTP connections, but it is
  generalized and expects you to extend it to create your own pooled objects.
-
