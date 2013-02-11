@@ -130,8 +130,8 @@ class ObjectPoolTestCase(unittest.TestCase):
 
 
 class NumbersPoolTestCase(unittest.TestCase):
-    N = 1500
-    SEC = 0.5
+    N = 150
+    SEC = 1
     maxDiff = None
 
     def setUp(self):
