@@ -57,9 +57,9 @@ import time
 import threading
 from collections import defaultdict
 
-from pool import ObjectPool, PoolLimitError, PoolVerificationError
-from pool.http import get_http_connection
-from pool.http import _pools as _http_pools
+from objpool import ObjectPool, PoolLimitError, PoolVerificationError
+from objpool.http import get_http_connection
+from objpool.http import _pools as _http_pools
 
 # Use backported unittest functionality if Python < 2.7
 try:
