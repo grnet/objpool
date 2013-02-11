@@ -1,9 +1,11 @@
 from distutils.core import setup
 
+from objpool.version import __version__
+
 setup(
     name='objpool',
-    version='0.1.1',
-    author='Synnefo Development Team',
+    version=__version__,
+    author='Synnefo development team',
     author_email='synnefo-devel@googlegroups.com',
     packages=['objpool'],
     scripts=[],

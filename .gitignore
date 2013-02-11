@@ -3,3 +3,5 @@
 build
 dist
 MANIFEST
+# Ignore automatically updated version file
+objpool/version.py
