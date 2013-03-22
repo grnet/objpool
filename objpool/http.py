@@ -104,10 +104,10 @@ class HTTPConnectionPool(ObjectPool):
         # The association is broken by put_http_connection(), to prevent
         # a connection object from being returned to the pool twice,
         # on duplicate invocations of conn.close().
-        if not conn._pool:
-            conn._pool = self
         if conn is None:
             return False
+        if not conn._pool:
+            conn._pool = self
         sock = conn.sock
         if sock is None:
             return True
