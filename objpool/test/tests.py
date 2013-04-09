@@ -404,5 +404,32 @@ class TestHTTPConnectionTestCase(unittest.TestCase):
                 self.assertEqual(pool._semaphore._Semaphore__value, 1)
 
 
+class ProcessSafetyTestCase(unittest.TestCase):
+
+    pool_class = NumbersPool
+
+    def setUp(self):
+        size = 3000
+        self.size = size
+        self.pool = self.pool_class(size)
+        self.exit_at_tear_down = 0
+
+    def tearDown(self):
+        if self.exit_at_tear_down:
+            from signal import SIGKILL
+            from os import getpid, kill
+            kill(getpid(), SIGKILL)
+
+    def test_fork(self):
+        from os import fork
+
+        pid = fork()
+        if pid == 0:
+            self.assertRaises(AssertionError, self.pool.pool_get)
+            self.exit_at_tear_down = 1
+        else:
+            self.pool.pool_get()
+
+
 if __name__ == '__main__':
     unittest.main()
