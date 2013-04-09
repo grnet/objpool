@@ -54,8 +54,15 @@ USAGE_LIMIT = 1000
 
 
 def init_http_pooling(size):
+    """Initializes default pool size and clears the pool registry.
+
+    Call before any other calls in the http pool library.
+    When forking call again for each new process.
+
+    """
     global default_pool_size
     default_pool_size = size
+    _pools.clear()
 
 
 class HTTPConnectionPool(ObjectPool):
