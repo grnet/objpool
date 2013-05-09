@@ -322,10 +322,11 @@ class TestHTTPConnectionTestCase(unittest.TestCase):
         sock.close()
 
     def test_double_release(self):
-        pooled = PooledHTTPConnection(self.netloc, self.scheme)
+        pooled = PooledHTTPConnection(self.netloc, self.scheme,
+                                      pool_key='test_key')
         pooled.acquire()
         pool = pooled._pool
-        cached_pool = _http_pools[(self.scheme, self.netloc)]
+        cached_pool = _http_pools[("test_key", self.scheme, self.netloc)]
         self.assertTrue(pooled._pool is cached_pool)
         pooled.release()
 
@@ -344,16 +345,17 @@ class TestHTTPConnectionTestCase(unittest.TestCase):
 
     def test_distinct_pools_per_scheme(self):
         with PooledHTTPConnection("127.0.0.1", "http",
-                                  attach_context=True) as conn:
+                                  attach_context=True, pool_key='test2') as conn:
             pool = conn._pool_context._pool
-            self.assertTrue(pool is _http_pools[("http", "127.0.0.1")])
+            print 'yo', _http_pools
+            self.assertTrue(pool is _http_pools[("test2", "http", "127.0.0.1")])
 
         with PooledHTTPConnection("127.0.0.1", "https",
-                                  attach_context=True) as conn2:
+                                  attach_context=True, pool_key='test2') as conn2:
             pool2 = conn2._pool_context._pool
             self.assertTrue(conn is not conn2)
             self.assertNotEqual(pool, pool2)
-            self.assertTrue(pool2 is _http_pools[("https", "127.0.0.1")])
+            self.assertTrue(pool2 is _http_pools[("test2", "https", "127.0.0.1")])
 
     def test_clean_connection(self):
         pool = None
