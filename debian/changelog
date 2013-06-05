@@ -1,3 +1,9 @@
+objpool (0.2-2wheezy) wheezy; urgency=low
+
+  * Add python-setuptools as build dependency
+
+ -- Nikos Skalkotos <skalkoto@grnet.gr>  Tue, 04 Jun 2013 14:51:43 +0300
+
 objpool (0.2-1wheezy) wheezy; urgency=low
 
   * New upstream version
