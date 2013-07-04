@@ -168,10 +168,12 @@ class ObjectPool(object):
                     try:
                         obj = self._set.pop()
                     except KeyError:
-                        obj = None
-                if obj is None and create:
-                    obj = self._pool_create()
-                    created = 1
+                        if create:
+                            obj = self._pool_create()
+                            created = 1
+                        else:
+                            obj = None
+                            break
 
                 if not self._pool_verify(obj):
                     if created:

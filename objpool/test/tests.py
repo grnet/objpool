@@ -257,6 +257,13 @@ class NumbersPoolTestCase(unittest.TestCase):
         self.numbers._pool_verify = false
         self.assertRaises(PoolVerificationError, numbers.pool_get)
 
+    def test_create_false(self):
+        numpool = self.numbers
+        for _ in xrange(self.N + 1):
+            none = numpool.pool_get(create=False)
+            self.assertEqual(none, None)
+            numpool.pool_put(None)
+
 
 class ThreadSafetyTestCase(unittest.TestCase):
 
