@@ -354,7 +354,6 @@ class TestHTTPConnectionTestCase(unittest.TestCase):
         with PooledHTTPConnection("127.0.0.1", "http",
                                   attach_context=True, pool_key='test2') as conn:
             pool = conn._pool_context._pool
-            print 'yo', _http_pools
             self.assertTrue(pool is _http_pools[("test2", "http", "127.0.0.1")])
 
         with PooledHTTPConnection("127.0.0.1", "https",
