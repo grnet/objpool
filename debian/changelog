@@ -1,3 +1,9 @@
+objpool (0.3-1~wheezy) wheezy; urgency=low
+
+  * New upstream version
+
+ -- Christos Stavrakakis <cstavr@grnet.gr>  Sat, 31 Aug 2013 18:13:49 +0300
+
 objpool (0.2-1) stable; urgency=low
 
   * New upstream version
@@ -9,4 +15,5 @@ objpool (0.1.1-1) stable; urgency=low
   * New upstream version
 
  -- Stavros Sachtouris <saxtouri@admin.grnet.gr>  Fri, 11 Jan 2013 15:10:32 +0200
+
 
