@@ -47,6 +47,7 @@ creation, destruction, allocation and release of their specific objects.
 # else:
 #     from threading import Semaphore
 from threading import Semaphore, Lock
+from os import getpid
 
 
 __all__ = ['ObjectPool', 'ObjectPoolError',
@@ -101,15 +102,20 @@ class ObjectPool(object):
 
 
     Callers beware:
-    The pool limit size must be greater than the total working set of objects,
-    otherwise it will hang. When in doubt, use an impossibly large size limit.
-    Since the pool grows on demand, this will not waste resources.
-    However, in that case, the pool must not be used as a flow control device
-    (i.e. relying on pool_get() blocking to stop threads),
-    as the impossibly large pool size limit will defer blocking until too late.
+
+    - The pool limit size must be greater than the total working set of
+      objects, otherwise it will hang. When in doubt, use an impossibly large
+      size limit.  Since the pool grows on demand, this will not waste
+      resources.  However, in that case, the pool must not be used as a flow
+      control device (i.e.  relying on pool_get() blocking to stop threads), as
+      the impossibly large pool size limit will defer blocking until too late.
+
+    - The pool cannot be shared among processes as the semaphore that it
+      relies upon will be copied when the new process is being created.
 
     """
     def __init__(self, size=None):
+        self._pool_pid = getpid()
         try:
             self.size = int(size)
             assert size >= 1
@@ -137,10 +143,16 @@ class ObjectPool(object):
         All objects returned (except None) are verified.
 
         """
+        if self._pool_pid != getpid():
+            msg = ("You cannot use a pool in a different process "
+                   "than it was created!")
+            raise AssertionError(msg)
+
         # timeout argument only supported by gevent and py3k variants
         # of Semaphore. acquire() will raise TypeError if timeout
         # is specified but not supported by the underlying implementation.
         log.debug("GET: about to get object from pool %r", self)
+
         kw = {"blocking": blocking}
         if timeout is not None:
             kw["timeout"] = timeout
@@ -156,10 +168,12 @@ class ObjectPool(object):
                     try:
                         obj = self._set.pop()
                     except KeyError:
-                        obj = None
-                if obj is None and create:
-                    obj = self._pool_create()
-                    created = 1
+                        if create:
+                            obj = self._pool_create()
+                            created = 1
+                        else:
+                            obj = None
+                            break
 
                 if not self._pool_verify(obj):
                     if created:
