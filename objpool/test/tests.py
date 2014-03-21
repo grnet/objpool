@@ -134,13 +134,15 @@ class ObjectPoolTestCase(unittest.TestCase):
     def test_put_with_factory(self):
         cleaned_objects = []
         pool = ObjectPool(3,
-            create=lambda: 0,
+            create=[2, 1, 0].pop,
             verify=lambda o: o % 2 == 0,
             cleanup=cleaned_objects.append,
         )
         self.assertEqual(pool.pool_get(), 0)
         pool.pool_put(0)
-        self.assertRaises(PoolVerificationError, pool.pool_put, 1)
+        self.assertEqual(pool.pool_get(), 0)
+        self.assertRaises(PoolVerificationError, pool.pool_get)
+        self.assertEqual(pool.pool_get(), 2)
         self.assertEqual(cleaned_objects, [0])
 
 
