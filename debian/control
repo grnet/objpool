@@ -2,8 +2,8 @@ Source: objpool
 Section: python
 Priority: optional
 Maintainer: Synnefo development team <synnefo-devel@googlegroups.com>
-Build-Depends: debhelper (>= 8), python-all (>= 2.5)
-Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 8), python-all (>= 2.5), python-setuptools
+Standards-Version: 3.9.4
 X-Python-Version: >= 2.6
 Homepage: https://github.com/grnet/objpool
 
