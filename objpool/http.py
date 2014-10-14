@@ -54,8 +54,15 @@ USAGE_LIMIT = 1000
 
 
 def init_http_pooling(size):
+    """Initializes default pool size and clears the pool registry.
+
+    Call before any other calls in the http pool library.
+    When forking call again for each new process.
+
+    """
     global default_pool_size
     default_pool_size = size
+    _pools.clear()
 
 
 class HTTPConnectionPool(ObjectPool):
@@ -119,11 +126,14 @@ class PooledHTTPConnection(PooledObject):
 
     _pool_log_prefix = "HTTP"
     _pool_class = HTTPConnectionPool
+    _pool_key = __name__
 
-    def __init__(self, netloc, scheme='http', pool=None, **kw):
+    def __init__(self, netloc, scheme='http', pool=None, pool_key=None, **kw):
         kw['netloc'] = netloc
         kw['scheme'] = scheme
         kw['pool'] = pool
+        if pool_key is not None:
+            kw['pool_key'] = pool_key
         super(PooledHTTPConnection, self).__init__(**kw)
 
     def get_pool(self):
@@ -136,8 +146,9 @@ class PooledHTTPConnection(PooledObject):
         scheme = kwargs['scheme']
         netloc = kwargs['netloc']
         size = kwargs.get('size', default_pool_size)
+        pool_key = kwargs.get('pool_key', self._pool_key)
         # ensure distinct pools for every (scheme, netloc) combination
-        key = (scheme, netloc)
+        key = (pool_key, scheme, netloc)
         with _pools_mutex:
             if key not in _pools:
                 log.debug("HTTP-GET: Creating pool for key %s", key)
