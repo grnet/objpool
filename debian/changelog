@@ -1,3 +1,9 @@
+objpool (0.2-1) stable; urgency=low
+
+  * New upstream version
+
+ -- Christos Stavrakakis <cstavr@grnet.gr>  Wed, 03 Apr 2013 15:54:16 +0300
+
 objpool (0.1.1-1) stable; urgency=low
 
   * New upstream version
