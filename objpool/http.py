@@ -1,4 +1,4 @@
-# Copyright 2011-2012 GRNET S.A. All rights reserved.
+# Copyright 2011-2014 GRNET S.A. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or
 # without modification, are permitted provided that the following
@@ -37,7 +37,7 @@ from select import select
 from httplib import (
     HTTPConnection as http_class,
     HTTPSConnection as https_class,
-    ResponseNotReady,
+    ResponseNotReady, BadStatusLine,
 )
 
 from threading import Lock
@@ -65,6 +65,56 @@ def init_http_pooling(size):
     _pools.clear()
 
 
+def _patch_connection(conn):
+    """Patch connection object to retry in case of BadStatusLine
+
+    Sometimes, when Apache is used as proxy, HTTP get response may raise a
+    BadStatusLine exception. This race condition occurs when the Apache proxy
+    module is being used with HTTP keepalive requests. The backend server may
+    close the keepalive connection right after httpd has checked the state of
+    this TCP connection, so httpd sends the request and waits for a response on
+    a connection that is in fact dead.
+
+    Solve the above error by re-sending the request when receiving a
+    BadStatusLine exception with empty line ('').
+
+    """
+    def _patch_request(*args, **kwargs):
+        """Save request parameters and call actual request function"""
+        conn._request_args = args
+        conn._request_kwargs = kwargs
+        conn._old_request(*args, **kwargs)
+
+    def _patch_getresponse():
+        """Retry in case of BadStatusLine"""
+        tries = 3
+        i = 0
+        while True:
+            i += 1
+            try:
+                return conn._old_getresponse()
+            except BadStatusLine as err:
+                if err.line == "''" and i <= tries:
+                    # Retry only in case line was empty ('')
+                    log.debug("HTTP-RESPONSE: BadStatusLine exception."
+                              " Retrying (try %d of %d)" % (i, tries))
+                    # Close the old connection
+                    conn.close()
+                    conn._old_request(*conn._request_args,
+                                      **conn._request_kwargs)
+                    continue
+                else:
+                    raise
+
+    # Save original functions
+    conn._old_request = conn.request
+    conn._old_getresponse = conn.getresponse
+
+    # Create new 'patched' functions
+    conn.request = _patch_request
+    conn.getresponse = _patch_getresponse
+
+
 class HTTPConnectionPool(ObjectPool):
 
     _scheme_to_class = {
@@ -90,6 +140,8 @@ class HTTPConnectionPool(ObjectPool):
         log.debug("CREATE-HTTP-BEFORE from pool %r", self)
         conn = self.connection_class(self.netloc)
         conn._pool_use_counter = USAGE_LIMIT
+        # Patch connection object to retry in case of BadStatusLine
+        _patch_connection(conn)
         return conn
 
     def _pool_verify(self, conn):
