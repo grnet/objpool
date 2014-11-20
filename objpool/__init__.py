@@ -114,7 +114,7 @@ class ObjectPool(object):
       relies upon will be copied when the new process is being created.
 
     """
-    def __init__(self, size=None):
+    def __init__(self, size=None, create=None, verify=None, cleanup=None):
         self._pool_pid = getpid()
         try:
             self.size = int(size)
@@ -122,6 +122,10 @@ class ObjectPool(object):
         except:
             raise ValueError("Invalid size for pool (positive integer "
                              "required): %r" % (size,))
+
+        self._create_func = create
+        self._verify_func = verify
+        self._cleanup_func = cleanup
 
         self._semaphore = Semaphore(size)  # Pool grows up to size limit
         self._mutex = Lock()  # Protect shared _set oject
@@ -237,7 +241,9 @@ class ObjectPool(object):
         Must be thread-safe.
 
         """
-        raise NotImplementedError
+        if self._create_func is None:
+            raise NotImplementedError
+        return self._create_func()
 
     def _pool_verify(self, obj):
         """Verify an object after getting it from the pool.
@@ -249,7 +255,9 @@ class ObjectPool(object):
         Must be thread-safe.
 
         """
-        raise NotImplementedError
+        if self._verify_func is None:
+            return True
+        return self._verify_func(obj)
 
     def _pool_cleanup(self, obj):
         """Cleanup an object before being put back into the pool.
@@ -259,7 +267,8 @@ class ObjectPool(object):
         Must be thread-safe.
 
         """
-        raise NotImplementedError
+        if self._cleanup_func is not None:
+            return self._cleanup_func(obj)
 
 
 class PooledObject(object):

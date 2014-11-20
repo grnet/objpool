@@ -1,0 +1,20 @@
+.. _Changelog:
+
+.. _Changelog-0.4:
+
+v0.4
+====
+
+Released: Thu Nov 20 12:13:43 EET 2014
+
+* Retry pooled connections in case of BadStatusLine
+
+
+.. _Changelog-0.1:
+
+v0.1
+====
+
+Released: Mon Dec  3 00:00:00 EET 2012
+
+* Initial release
