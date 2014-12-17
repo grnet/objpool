@@ -123,12 +123,27 @@ class ObjectPoolTestCase(unittest.TestCase):
         """Test pool_get() method not implemented in abstract class"""
         pool = ObjectPool(100)
         self.assertRaises(NotImplementedError, pool._pool_create)
-        self.assertRaises(NotImplementedError, pool._pool_verify, None)
 
-    def test_put_not_implemented(self):
-        """Test pool_put() method not implemented in abstract class"""
-        pool = ObjectPool(100)
-        self.assertRaises(NotImplementedError, pool._pool_cleanup, None)
+    def test_get_with_factory(self):
+        obj_generator = iter(range(10)).next
+        pool = ObjectPool(3, create=obj_generator)
+        self.assertEqual(pool.pool_get(), 0)
+        self.assertEqual(pool.pool_get(), 1)
+        self.assertEqual(pool.pool_get(), 2)
+
+    def test_put_with_factory(self):
+        cleaned_objects = []
+        pool = ObjectPool(3,
+            create=[2, 1, 0].pop,
+            verify=lambda o: o % 2 == 0,
+            cleanup=cleaned_objects.append,
+        )
+        self.assertEqual(pool.pool_get(), 0)
+        pool.pool_put(0)
+        self.assertEqual(pool.pool_get(), 0)
+        self.assertRaises(PoolVerificationError, pool.pool_get)
+        self.assertEqual(pool.pool_get(), 2)
+        self.assertEqual(cleaned_objects, [0])
 
 
 class NumbersPoolTestCase(unittest.TestCase):
