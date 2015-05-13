@@ -1,15 +1,3 @@
-objpool (0.4-1~wheezy) wheezy; urgency=low
-
-  * New upstream version
-
- -- Ilias Tsitsimpis <iliastsi@grnet.gr>  Thu, 20 Nov 2014 12:19:37 +0200
-
-objpool (0.4~rc1-1~wheezy) wheezy; urgency=low
-
-  * New upstream version
-
- -- Ilias Tsitsimpis <iliastsi@grnet.gr>  Tue, 14 Oct 2014 12:03:41 +0300
-
 objpool (0.3-1~wheezy) wheezy; urgency=low
 
   * New upstream version
