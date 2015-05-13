@@ -1,3 +1,9 @@
+objpool (0.4-1~jessie) jessie; urgency=medium
+
+  * New upstream version
+
+ -- Nikos Skalkotos <skalkoto@grnet.gr>  Wed, 13 May 2015 18:08:53 +0300
+
 objpool (0.3-1~wheezy) wheezy; urgency=low
 
   * New upstream version
@@ -27,6 +33,7 @@ objpool (0.1.1-1) stable; urgency=low
   * New upstream version
 
  -- Stavros Sachtouris <saxtouri@admin.grnet.gr>  Fri, 11 Jan 2013 15:10:32 +0200
+
 
 
 
