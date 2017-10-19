@@ -1,3 +1,9 @@
+objpool (0.4-2~stretch) stretch; urgency=medium
+
+  * New upstream version
+
+ -- Nikos Skalkotos <skalkoto@grnet.gr>  Thu, 19 Oct 2017 12:12:27 +0300
+
 objpool (0.4-1~jessie) jessie; urgency=medium
 
   * New upstream version
